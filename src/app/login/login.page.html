@@ -1,28 +1,25 @@
-<ion-content class="ion-padding">
-
-  <!-- Logo Image -->
-  <div class="ion-text-center">
-    <ion-img src="assets/coffee.jpg"></ion-img>
-  </div>
-
-  <!-- Login Heading -->
-  <h2 class="ion-text-center ion-margin-top">Login</h2>
-
-  <!-- Input Fields -->
-  <ion-list>
-    <ion-item>
-      <ion-label position="floating">Username</ion-label>
-      <ion-input type="text"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password"></ion-input>
-    </ion-item>
-  </ion-list>
-
-  <!-- Enter Button -->
-  <div class="ion-margin-top ion-text-center">
-    <ion-button expand="block">Enter</ion-button>
-  </div>
-
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Login to your coffee account</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Username</ion-label>
+        <ion-input type="text" name="username"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" name="password"></ion-input>
+      </ion-item>
+    </ion-card-content>
+    <ion-footer>
+      <ion-button type="submit" expand="block">Login</ion-button>
+    </ion-footer>
+  </ion-card>
 </ion-content>

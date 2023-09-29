@@ -16,4 +16,9 @@ export const routes: Routes = [
     redirectTo: 'splash',
     pathMatch: 'full',
   },
+  {
+    path: 'coffee-flavours',
+    loadComponent: () => import('./coffee-flavours/coffee-flavours.page').then( m => m.CoffeeFlavoursPage)
+  },
+
 ];

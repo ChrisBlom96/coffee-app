@@ -1,20 +1,45 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiService } from '../services/api.service';
+import { IonicModule, AlertController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule],
+  standalone: true
 })
 export class LoginPage implements OnInit {
+  username = '';
+  password = '';
 
-  constructor() { }
+  constructor(private apiService: ApiService, private alertController: AlertController, private router: Router) { }
 
   ngOnInit() {
   }
 
+  login() {
+    this.apiService.validateLogin(this.username, this.password).subscribe(response => {
+      console.log(response);
+      // handle successful login
+      this.router.navigate(['/coffee-flavours']);
+    }, error => {
+      console.error(error);
+      // handle login error
+      this.presentAlert('Login Error', 'Invalid username or password.');
+    });
+  }
+
+  async presentAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
 }
