@@ -63,15 +63,13 @@ export class ApiService {
                      xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
         <soap:Body>
           <UpdateEntryByID xmlns="intelliacc.com/ws_Auth">
-            <Request>
-              <ID>${pod.ID}</ID>
-              <Barcode>${pod.Barcode}</Barcode>
-              <Name>${pod.Name}</Name>
-              <PricePerBox>${pod.PricePerBox}</PricePerBox>
-              <PodsPerBox>${pod.PodsPerBox}</PodsPerBox>
-              <PhotoName>${pod.PhotoName}</PhotoName>
-              ${image ? `<Image>${image}</Image>` : ''}
-            </Request>
+          <ID>${pod.ID}</ID>
+          <Barcode>${pod.Barcode}</Barcode>
+          <Name>${pod.Name}</Name>
+          <PricePerBox>${pod.PricePerBox}</PricePerBox>
+          <PodsPerBox>${pod.PodsPerBox}</PodsPerBox>
+          <PhotoName>${pod.PhotoName}</PhotoName>
+          ${image ? `<Image>${image}</Image>` : ''}
           </UpdateEntryByID>
         </soap:Body>
       </soap:Envelope>
