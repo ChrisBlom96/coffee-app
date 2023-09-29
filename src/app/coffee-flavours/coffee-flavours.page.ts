@@ -23,33 +23,7 @@ export interface Pod {
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class CoffeeFlavoursPage implements OnInit {
-  pods: Pod[] = [{
-    ID: 1,
-    Barcode: 'CP001',
-    Name: 'Vanilla',
-    PricePerBox: 10,
-    PricePerPod: 0.5,
-    PodsPerBox: 20,
-    PhotoName: 'vanilla.jpg'
-  },
-  {
-    ID: 2,
-    Barcode: 'CP002',
-    Name: 'Caramel',
-    PricePerBox: 12,
-    PricePerPod: 0.6,
-    PodsPerBox: 24,
-    PhotoName: 'caramel.jpg'
-  },
-  {
-    ID: 3,
-    Barcode: 'CP003',
-    Name: 'Hazelnut',
-    PricePerBox: 15,
-    PricePerPod: 0.75,
-    PodsPerBox: 30,
-    PhotoName: 'hazelnut.jpg'
-  }];
+  pods: Pod[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -61,41 +35,30 @@ export class CoffeeFlavoursPage implements OnInit {
     this.refresh();
   }
 
-  refresh(): void {
-    this.apiService.getProducts().subscribe({
-      next: async (response: string) => {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(response, 'text/xml');
-        const pods = Array.from(xml.getElementsByTagName('Product')).map((product: Element) => {
-          return {
-            ID: parseInt(product.getElementsByTagName('ID')[0]?.textContent || '0'),
-            Barcode: product.getElementsByTagName('Barcode')[0]?.textContent || '',
-            Name: product.getElementsByTagName('Name')[0]?.textContent || '',
-            PricePerBox: parseFloat(product.getElementsByTagName('PricePerBox')[0]?.textContent || '0'),
-            PricePerPod: parseFloat(product.getElementsByTagName('PricePerPod')[0]?.textContent || '0'),
-            PodsPerBox: parseFloat(product.getElementsByTagName('PodsPerBox')[0]?.textContent || '0'),
-            PhotoName: product.getElementsByTagName('PhotoName')[0]?.textContent || ''
-          };
-        });
-        console.log(pods);
-        this.pods = pods;
-        const alert = await this.alertController.create({
-          header: 'Refreshed',
-          message: 'Coffee flavours have been refreshed.',
-          buttons: ['OK']
-        });
-        await alert.present();
-      },
-      error: async (error: any) => {
-        console.error(error);
-        const alert = await this.alertController.create({
-          header: 'Sync',
-          message: 'Syncing Completed!',
-          buttons: ['OK']
-        });
-        await alert.present();
-      }
-    });
+  async refresh(): Promise<void> {
+    try {
+      const response = await this.apiService.getProducts().toPromise();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(response, 'text/xml');
+      const json = xml.getElementsByTagName('GetAllEntriesFromCOFFEESTOCK_TEMP_APPLICATIONResult')[0]?.textContent || '';
+      const pods = JSON.parse(json);
+      console.log(pods);
+      this.pods = pods;
+      const alert = await this.alertController.create({
+        header: 'Refreshed',
+        message: 'Coffee flavours have been refreshed.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    } catch (error) {
+      console.error(error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Failed to load coffee flavours.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
   async add(): Promise<void> {
