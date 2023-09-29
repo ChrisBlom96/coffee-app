@@ -18,6 +18,8 @@ export class LoginPage implements OnInit {
 
   constructor(private apiService: ApiService, private alertController: AlertController, private router: Router) { }
 
+
+  
   ngOnInit() {
   }
 
