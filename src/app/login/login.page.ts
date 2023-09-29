@@ -23,9 +23,17 @@ export class LoginPage implements OnInit {
 
   login() {
     this.apiService.validateLogin(this.username, this.password).subscribe(response => {
-      console.log(response);
-      // handle successful login
-      this.router.navigate(['/coffee-flavours']);
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(response, 'text/xml');
+      const json = JSON.parse(xml.getElementsByTagName('ValidateLoginResult')[0]?.textContent || '');
+      console.log(json);
+      if (json.Success) {
+        // handle successful login
+        this.router.navigate(['/coffee-flavours']);
+      } else {
+        // handle login error
+        this.presentAlert('Login Error', 'Invalid username or password.');
+      }
     }, error => {
       console.error(error);
       // handle login error
