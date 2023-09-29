@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-flavour-edit',
@@ -12,9 +13,13 @@ import { IonicModule } from '@ionic/angular';
 })
 export class FlavourEditPage implements OnInit {
 
-  constructor() { }
+  constructor(private modalController: ModalController, private apiService: ApiService) { }
 
   ngOnInit() {
+  }
+
+  dismiss() {
+    this.modalController.dismiss();
   }
 
 }
