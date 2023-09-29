@@ -17,13 +17,10 @@
 <ion-content [fullscreen]="true">
   <ion-list>
     <ion-item *ngFor="let pod of pods">
-      <ion-thumbnail slot="start">
-        <img [src]="pod.photoUrl">
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ pod.name }}</h2>
-        <p>Product Number: {{ pod.productNumber }}</p>
-      </ion-label>
+    <ion-label>
+      <h2>{{ pod.name }}</h2>
+      <h3>Product Number: {{ pod.productNumber }}</h3>
+    </ion-label>
       <ion-buttons slot="end">
         <ion-button (click)="edit(pod)">
           <ion-icon slot="icon-only" name="create"></ion-icon>
@@ -32,6 +29,10 @@
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
       </ion-buttons>
+      <ion-thumbnail slot="end">
+        <img [src]="pod.photoUrl">
+      </ion-thumbnail>
     </ion-item>
   </ion-list>
+  
 </ion-content>

@@ -20,7 +20,16 @@ ion-button {
 /* Styling for the ion-item lists */
 ion-item {
     padding: 10px;  /* Set padding */
-    box-shadow: 0 4px 8px lightgrey;  /* Set the box-shadow with a light grey color */
+    box-shadow:13px 4px 3px grey;/* Set the box-shadow with a light grey color */
     box-sizing: border-box;  
-    
+}
+
+.circular-icon {
+    border-radius: 50%;
+    background-color: #8A4B38;  /* Or any color you prefer */
+    color: #fff;  /* Icon color */
+  }
+
+ion-icon{
+    color: black;
 }
