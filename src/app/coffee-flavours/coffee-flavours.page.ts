@@ -5,10 +5,12 @@ import { IonicModule, AlertController, ModalController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 import { FlavourEditPage } from '../flavour-edit/flavour-edit.page';
 
-interface Pod {
+export interface Pod {
   name: string;
   productNumber: string;
   photoUrl: string;
+  pricePerBox: number;
+  pricePerUnit: number;
 }
 
 @Component({
@@ -22,27 +24,37 @@ export class CoffeeFlavoursPage implements OnInit {
   pods: Pod[] = [{
     name: 'Vanilla',
     productNumber: 'CP001',
-    photoUrl: 'https://via.placeholder.com/150'
+    photoUrl: 'https://via.placeholder.com/150',
+    pricePerBox: 10,
+    pricePerUnit: 0.5
   },
   {
     name: 'Caramel',
     productNumber: 'CP002',
-    photoUrl: 'https://via.placeholder.com/150'
+    photoUrl: 'https://via.placeholder.com/150',
+    pricePerBox: 12,
+    pricePerUnit: 0.6
   },
   {
     name: 'Hazelnut',
     productNumber: 'CP003',
-    photoUrl: 'https://via.placeholder.com/150'
+    photoUrl: 'https://via.placeholder.com/150',
+    pricePerBox: 15,
+    pricePerUnit: 0.75
   },
   {
     name: 'Chocolate',
     productNumber: 'CP004',
-    photoUrl: 'https://via.placeholder.com/150'
+    photoUrl: 'https://via.placeholder.com/150',
+    pricePerBox: 18,
+    pricePerUnit: 0.9
   },
   {
     name: 'Cinnamon',
     productNumber: 'CP005',
-    photoUrl: 'https://via.placeholder.com/150'
+    photoUrl: 'https://via.placeholder.com/150',
+    pricePerBox: 20,
+    pricePerUnit: 1
   }];
 
   constructor(private apiService: ApiService, private alertController: AlertController, private modalController: ModalController) { }
@@ -60,7 +72,9 @@ export class CoffeeFlavoursPage implements OnInit {
           return {
             name: product.getElementsByTagName('ProductName')[0]?.textContent || '',
             productNumber: product.getElementsByTagName('ProductNumber')[0]?.textContent || '',
-            photoUrl: product.getElementsByTagName('PhotoUrl')[0]?.textContent || ''
+            photoUrl: product.getElementsByTagName('PhotoUrl')[0]?.textContent || '',
+            pricePerBox: parseFloat(product.getElementsByTagName('PricePerBox')[0]?.textContent || '0'),
+            pricePerUnit: parseFloat(product.getElementsByTagName('PricePerUnit')[0]?.textContent || '0')
           };
         });
         this.pods = pods;
