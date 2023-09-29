@@ -10,7 +10,7 @@ export interface Pod {
   Barcode: string;
   Name: string;
   PricePerBox: number;
-  PricePerPod: number;
+  PricePerPod?: number;
   PodsPerBox: number;
   PhotoName: string;
 }
