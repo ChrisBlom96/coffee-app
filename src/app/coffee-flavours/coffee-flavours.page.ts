@@ -51,23 +51,34 @@ export class CoffeeFlavoursPage implements OnInit {
   }
 
   refresh(): void {
-    this.apiService.getProducts().subscribe(async(response: string) => {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(response, 'text/xml');
-      const pods = Array.from(xml.getElementsByTagName('Product')).map((product: Element) => {
-        return {
-          name: product.getElementsByTagName('ProductName')[0]?.textContent || '',
-          productNumber: product.getElementsByTagName('ProductNumber')[0]?.textContent || '',
-          photoUrl: product.getElementsByTagName('PhotoUrl')[0]?.textContent || ''
-        };
-      });
-      this.pods = pods;
-      const alert = await this.alertController.create({
-        header: 'Refreshed',
-        message: 'Coffee flavours have been refreshed.',
-        buttons: ['OK']
-      });
-      await alert.present();
+    this.apiService.getProducts().subscribe({
+      next: async (response: string) => {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(response, 'text/xml');
+        const pods = Array.from(xml.getElementsByTagName('Product')).map((product: Element) => {
+          return {
+            name: product.getElementsByTagName('ProductName')[0]?.textContent || '',
+            productNumber: product.getElementsByTagName('ProductNumber')[0]?.textContent || '',
+            photoUrl: product.getElementsByTagName('PhotoUrl')[0]?.textContent || ''
+          };
+        });
+        this.pods = pods;
+        const alert = await this.alertController.create({
+          header: 'Refreshed',
+          message: 'Coffee flavours have been refreshed.',
+          buttons: ['OK']
+        });
+        await alert.present();
+      },
+      error: async (error: any) => {
+        console.error(error);
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'Failed to refresh coffee flavours.',
+          buttons: ['OK']
+        });
+        await alert.present();
+      }
     });
   }
 
