@@ -1,51 +1,28 @@
-/* src/app/login/login.page.scss */
-
-/* General styling */
-:host {
-    ion-content {
-        --background: var(--ion-color-custom);
-    }
-}
-
 .login-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     height: 100%;
-    padding: 16px;
-    text-align: center;
 }
 
-.login-title {
+.logo {
+    max-width: 150px;  /* Adjust based on your logo size */
+    margin-bottom: 20px;
+}
+
+.login-heading {
     font-size: 24px;
-    margin-bottom: 24px;
-    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
 
-.login-input {
-    margin-bottom: 16px;
-    --background: rgba(255, 255, 255, 0.1);
-    --color: #ffffff;
-    --placeholder-color: rgba(255, 255, 255, 0.6);
-    --border-color: rgba(255, 255, 255, 0.3);
+ion-item {
+    margin-bottom: 10px;
+    width: 80%;  /* Adjust based on your preference */
 }
 
-.login-button {
-    width: 100%;
-    --background: #ffffff;
-    --color: var(--ion-color-custom);
+.enter-button {
+    margin-top: 20px;
 }
-
-ion-text {
-    display: block;
-    text-align: center;
-}
-
-ion-img {
-    max-width: 150px;  // Adjust as needed
-    max-height: 150px; // Adjust as needed
-    display: block;
-    margin: 0 auto;
-  }
   
