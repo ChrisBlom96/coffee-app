@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/api.service';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, AlertController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginPage implements OnInit {
   username = '';
   password = '';
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private alertController: AlertController, private router: Router) { }
 
   ngOnInit() {
   }
@@ -24,9 +25,21 @@ export class LoginPage implements OnInit {
     this.apiService.validateLogin(this.username, this.password).subscribe(response => {
       console.log(response);
       // handle successful login
+      this.router.navigate(['/coffee-flavours']);
     }, error => {
       console.error(error);
       // handle login error
+      this.presentAlert('Login Error', 'Invalid username or password.');
     });
+  }
+
+  async presentAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 }
