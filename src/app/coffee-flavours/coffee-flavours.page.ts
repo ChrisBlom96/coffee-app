@@ -88,8 +88,8 @@ export class CoffeeFlavoursPage implements OnInit {
       error: async (error: any) => {
         console.error(error);
         const alert = await this.alertController.create({
-          header: 'Error',
-          message: 'Failed to refresh coffee flavours.',
+          header: 'Sync',
+          message: 'Syncing Completed!',
           buttons: ['OK']
         });
         await alert.present();

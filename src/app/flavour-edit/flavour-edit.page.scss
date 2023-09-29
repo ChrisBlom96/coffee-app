@@ -2,3 +2,13 @@ ion-toolbar {
     --background: #8A4B38;
 }
 
+ion-content {
+    --background: #ffffff;  /* Set background color to white */
+  }
+  
+  ion-toolbar {
+    --background: #ffffff;  /* Set background color to white */
+    --color: #000000;       /* Set text color to black for better visibility on white background */
+  }
+  
+
