@@ -5,6 +5,7 @@ import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 import { Pod } from '../coffee-flavours/coffee-flavours.page';
 import { Camera, CameraResultType } from '@capacitor/camera';
+import { BarcodeScanner, BarcodeScannerPlugin, ScanOptions, ScanResult, SupportedFormat, CameraDirection } from '@capacitor-community/barcode-scanner';
 
 @Component({
   selector: 'app-flavour-edit',
@@ -20,8 +21,11 @@ export class FlavourEditPage implements OnInit {
   pricePerBox: number = 0;
   pricePerUnit: number = 0;
   image: string | undefined;
+  scanner: BarcodeScannerPlugin;
 
-  constructor(private modalController: ModalController, private apiService: ApiService, private alertController: AlertController) { }
+  constructor(private modalController: ModalController, private apiService: ApiService, private alertController: AlertController) {
+    this.scanner = BarcodeScanner;
+  }
 
   ngOnInit() {
     if (this.pod) {
@@ -84,6 +88,23 @@ export class FlavourEditPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async scanBarcode() {
+    try {
+      const options: ScanOptions = {
+        targetedFormats: [SupportedFormat.QR_CODE, SupportedFormat.PDF_417],
+        cameraDirection: CameraDirection.BACK
+      };
+  
+      const result: ScanResult = await this.scanner.startScan(options);
+      if (result.hasContent) {
+        this.barcode = result.content;
+      }
+    } catch (error) {
+      console.error(error);
+      this.presentErrorAlert();
+    }
   }
 
 }
