@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 import { Pod } from '../coffee-flavours/coffee-flavours.page';
 import { Camera, CameraResultType } from '@capacitor/camera';
@@ -19,8 +19,9 @@ export class FlavourEditPage implements OnInit {
   flavourName: string = '';
   pricePerBox: number = 0;
   pricePerUnit: number = 0;
+  image: string | undefined;
 
-  constructor(private modalController: ModalController, private apiService: ApiService) { }
+  constructor(private modalController: ModalController, private apiService: ApiService, private alertController: AlertController) { }
 
   ngOnInit() {
     if (this.pod) {
@@ -41,7 +42,48 @@ export class FlavourEditPage implements OnInit {
       allowEditing: true,
       resultType: CameraResultType.DataUrl
     });
-    // Do something with the captured image data
+    this.image = image.dataUrl;
+  }
+
+  savePod() {
+    const pod = this.getPod();
+    this.apiService.savePod(pod, this.image).subscribe(response => {
+      console.log(response);
+      this.dismiss();
+      this.presentSuccessAlert();
+    }, error => {
+      console.error(error);
+      this.presentErrorAlert();
+    });
+  }
+
+  private getPod(): Pod {
+    return {
+      productNumber: this.barcode,
+      name: this.flavourName,
+      pricePerBox: this.pricePerBox,
+      pricePerUnit: this.pricePerUnit
+    };
+  }
+
+  async presentSuccessAlert() {
+    const alert = await this.alertController.create({
+      header: 'Success',
+      message: 'Pod saved successfully',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+  async presentErrorAlert() {
+    const alert = await this.alertController.create({
+      header: 'Error',
+      message: 'Failed to save pod',
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
 }

@@ -36,9 +36,14 @@
       <ion-item (click)="capturePicture()">
         <ion-label>Image</ion-label>
         <ion-avatar slot="end">
-          <img src="https://via.placeholder.com/150" alt="Flavour Image">
+          <img *ngIf="image" [src]="image" alt="Flavour Image">
+          <img *ngIf="!image" src="https://via.placeholder.com/150" alt="Flavour Image">
         </ion-avatar>
       </ion-item>
     </ion-card-content>
-  </ion-card>
+  </ion-card>  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="savePod()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

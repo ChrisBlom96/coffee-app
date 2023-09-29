@@ -8,7 +8,7 @@ import { FlavourEditPage } from '../flavour-edit/flavour-edit.page';
 export interface Pod {
   name: string;
   productNumber: string;
-  photoUrl: string;
+  photoUrl?: string;
   pricePerBox: number;
   pricePerUnit: number;
 }
