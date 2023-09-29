@@ -19,6 +19,10 @@ export const routes: Routes = [
   {
     path: 'coffee-flavours',
     loadComponent: () => import('./coffee-flavours/coffee-flavours.page').then( m => m.CoffeeFlavoursPage)
+  },  {
+    path: 'flavour-edit',
+    loadComponent: () => import('./flavour-edit/flavour-edit.page').then( m => m.FlavourEditPage)
   },
+
 
 ];
