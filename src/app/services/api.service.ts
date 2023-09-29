@@ -12,31 +12,27 @@ export class ApiService {
 
   validateLogin(username: string, password: string): Observable<any> {
     const headers = new HttpHeaders()
-      .set('Content-Type', 'text/xml')
-      .set('SOAPAction', 'http://tempuri.org/Validate_Login');
-
+      .set('Content-Type', 'text/xml');
+  
     const body = `
     <?xml version="1.0" encoding="utf-8"?>
     <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
       <soap:Body>
-        <Validate_Login xmlns="intelliacc.com/ws_Auth">
-          <Request>
-            <UserName>${username}</UserName>
-            <Password>${password}</Password>
-          </Request>
-        </Validate_Login>
+        <ValidateLogin xmlns="intelliacc.com/ws_Auth">
+          <InputUsername>${username}</InputUsername>
+          <InputPassword>${password}</InputPassword>
+        </ValidateLogin>
       </soap:Body>
     </soap:Envelope>
     `.trim();
-
+  
     return this.http.post(this.apiUrl, body, { headers, responseType: 'text' });
   }
   getProducts(): Observable<any> {
     const headers = new HttpHeaders()
-      .set('Content-Type', 'text/xml')
-      .set('SOAPAction', 'http://tempuri.org/Get_Products');
+      .set('Content-Type', 'text/xml');
   
     const body = `
     <?xml version="1.0" encoding="utf-8"?>

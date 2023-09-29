@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, AlertController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 
 interface Pod {
@@ -44,14 +44,14 @@ export class CoffeeFlavoursPage implements OnInit {
     photoUrl: 'https://via.placeholder.com/150'
   }];
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private alertController: AlertController) { }
 
   ngOnInit(): void {
     this.refresh();
   }
 
   refresh(): void {
-    this.apiService.getProducts().subscribe((response: string) => {
+    this.apiService.getProducts().subscribe(async(response: string) => {
       const parser = new DOMParser();
       const xml = parser.parseFromString(response, 'text/xml');
       const pods = Array.from(xml.getElementsByTagName('Product')).map((product: Element) => {
@@ -62,6 +62,12 @@ export class CoffeeFlavoursPage implements OnInit {
         };
       });
       this.pods = pods;
+      const alert = await this.alertController.create({
+        header: 'Refreshed',
+        message: 'Coffee flavours have been refreshed.',
+        buttons: ['OK']
+      });
+      await alert.present();
     });
   }
 
