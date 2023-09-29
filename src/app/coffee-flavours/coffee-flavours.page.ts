@@ -102,22 +102,20 @@ export class CoffeeFlavoursPage implements OnInit {
         },
         {
           text: 'Delete',
-          handler: async () => {
-            const response = await this.apiService.deletePod(pod.ID).toPromise();
-            if (response === 'true') {
+          handler: () => {
+            this.apiService.deletePod(pod.ID).subscribe(() => {
               const index = this.pods.findIndex(p => p.ID === pod.ID);
               if (index >= 0) {
                 this.pods.splice(index, 1);
                 this.refresh();
               }
-            } else {
-              const alert = await this.alertController.create({
+            }, () => {
+              this.alertController.create({
                 header: 'Error',
                 message: 'Failed to delete coffee flavour.',
                 buttons: ['OK']
-              });
-              await alert.present();
-            }
+              }).then(alert => alert.present());
+            });
           }
         }
       ]
