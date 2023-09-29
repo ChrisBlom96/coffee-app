@@ -26,3 +26,11 @@ ion-item {
     margin-top: 20px;
 }
   
+.center-container {
+    display: flex;
+    justify-content: center;  /* Horizontally center */
+    align-items: center;      /* Vertically center */
+    height: 100%;    
+    margin-top: 20px;    
+  }
+  
