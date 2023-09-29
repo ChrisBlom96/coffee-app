@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
 import { Pod } from '../coffee-flavours/coffee-flavours.page';
+import { Camera, CameraResultType } from '@capacitor/camera';
 
 @Component({
   selector: 'app-flavour-edit',
@@ -32,6 +33,15 @@ export class FlavourEditPage implements OnInit {
 
   dismiss() {
     this.modalController.dismiss();
+  }
+
+  async capturePicture() {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.DataUrl
+    });
+    // Do something with the captured image data
   }
 
 }

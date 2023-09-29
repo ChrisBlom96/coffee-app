@@ -33,11 +33,11 @@
         <ion-label position="floating">Price Per Unit</ion-label>
         <ion-input type="number" [(ngModel)]="pricePerUnit"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item (click)="capturePicture()">
         <ion-label>Image</ion-label>
-        <ion-button fill="clear" slot="end">
-          <ion-icon slot="icon-only" name="add-circle"></ion-icon>
-        </ion-button>
+        <ion-avatar slot="end">
+          <img src="https://via.placeholder.com/150" alt="Flavour Image">
+        </ion-avatar>
       </ion-item>
     </ion-card-content>
   </ion-card>
