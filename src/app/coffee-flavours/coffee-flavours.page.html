@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>coffee-flavours</ion-title>
+    <ion-title>Coffee Flavours</ion-title>
     <ion-buttons slot="start">
       <ion-button (click)="refresh()">
         <ion-icon slot="icon-only" name="refresh"></ion-icon>
@@ -17,10 +17,10 @@
 <ion-content [fullscreen]="true">
   <ion-list>
     <ion-item *ngFor="let pod of pods">
-    <ion-label>
-      <h2>{{ pod.name }}</h2>
-      <h3>Product Number: {{ pod.productNumber }}</h3>
-    </ion-label>
+      <ion-label>
+        <h2>{{ pod.Name }}</h2>
+        <h3>Product Number: {{ pod.Barcode }}</h3>
+      </ion-label>
       <ion-buttons slot="end">
         <ion-button (click)="edit(pod)">
           <ion-icon slot="icon-only" name="create"></ion-icon>
@@ -30,15 +30,8 @@
         </ion-button>
       </ion-buttons>
       <ion-thumbnail slot="end">
-        <img [src]="pod.photoUrl">
+        <img [src]="pod.PhotoName">
       </ion-thumbnail>
     </ion-item>
   </ion-list>
-
-<p> <b>DEV Instructions:</b> The sync icon in the header will sync all application data. Click to see alert controller... 
-</p>
-
-<p> <b>NEXT STEP:</b> Click on the add flavour icon in the header
-</p>
-
 </ion-content>

@@ -22,6 +22,7 @@ export class FlavourEditPage implements OnInit {
   pricePerUnit: number = 0;
   image: string | undefined;
   scanner: BarcodeScannerPlugin;
+  podsPerBox: number = 0;
 
   constructor(private modalController: ModalController, private apiService: ApiService, private alertController: AlertController) {
     this.scanner = BarcodeScanner;
@@ -29,10 +30,10 @@ export class FlavourEditPage implements OnInit {
 
   ngOnInit() {
     if (this.pod) {
-      this.barcode = this.pod.productNumber;
-      this.flavourName = this.pod.name;
-      this.pricePerBox = this.pod.pricePerBox;
-      this.pricePerUnit = this.pod.pricePerUnit;
+      this.barcode = this.pod.Barcode;
+      this.flavourName = this.pod.Name;
+      this.pricePerBox = this.pod.PricePerBox;
+      this.podsPerBox = this.pod.PodsPerBox;
     }
   }
 
@@ -63,10 +64,12 @@ export class FlavourEditPage implements OnInit {
 
   private getPod(): Pod {
     return {
-      productNumber: this.barcode,
-      name: this.flavourName,
-      pricePerBox: this.pricePerBox,
-      pricePerUnit: this.pricePerUnit
+      ID: this.pod ? this.pod.ID : 0,
+      Barcode: this.barcode,
+      Name: this.flavourName,
+      PricePerBox: this.pricePerBox,
+      PodsPerBox: this.podsPerBox,
+      PhotoName: this.image ? `data:image/jpeg;base64,${this.image}` : ''
     };
   }
 

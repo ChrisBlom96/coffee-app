@@ -6,11 +6,13 @@ import { ApiService } from '../services/api.service';
 import { FlavourEditPage } from '../flavour-edit/flavour-edit.page';
 
 export interface Pod {
-  name: string;
-  productNumber: string;
-  photoUrl?: string;
-  pricePerBox: number;
-  pricePerUnit: number;
+  ID: number;
+  Barcode: string;
+  Name: string;
+  PricePerBox: number;
+  PricePerPod?: number;
+  PodsPerBox: number;
+  PhotoName: string;
 }
 
 @Component({
@@ -21,100 +23,112 @@ export interface Pod {
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class CoffeeFlavoursPage implements OnInit {
-  pods: Pod[] = [{
-    name: 'Vanilla',
-    productNumber: 'CP001',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 10,
-    pricePerUnit: 0.5
-  },
-  {
-    name: 'Caramel',
-    productNumber: 'CP002',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 12,
-    pricePerUnit: 0.6
-  },
-  {
-    name: 'Hazelnut',
-    productNumber: 'CP003',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 15,
-    pricePerUnit: 0.75
-  },
-  {
-    name: 'Chocolate',
-    productNumber: 'CP004',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 18,
-    pricePerUnit: 0.9
-  },
-  {
-    name: 'Cinnamon',
-    productNumber: 'CP005',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 20,
-    pricePerUnit: 1
-  }];
+  pods: Pod[] = [];
 
-  constructor(private apiService: ApiService, private alertController: AlertController, private modalController: ModalController) { }
+  constructor(
+    private apiService: ApiService,
+    private alertController: AlertController,
+    private modalController: ModalController
+  ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.refresh();
   }
 
-  refresh(): void {
-    this.apiService.getProducts().subscribe({
-      next: async (response: string) => {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(response, 'text/xml');
-        const pods = Array.from(xml.getElementsByTagName('Product')).map((product: Element) => {
-          return {
-            name: product.getElementsByTagName('ProductName')[0]?.textContent || '',
-            productNumber: product.getElementsByTagName('ProductNumber')[0]?.textContent || '',
-            photoUrl: product.getElementsByTagName('PhotoUrl')[0]?.textContent || '',
-            pricePerBox: parseFloat(product.getElementsByTagName('PricePerBox')[0]?.textContent || '0'),
-            pricePerUnit: parseFloat(product.getElementsByTagName('PricePerUnit')[0]?.textContent || '0')
-          };
-        });
-        this.pods = pods;
-        const alert = await this.alertController.create({
-          header: 'Refreshed',
-          message: 'Coffee flavours have been refreshed.',
-          buttons: ['OK']
-        });
-        await alert.present();
-      },
-      error: async (error: any) => {
-        console.error(error);
-        const alert = await this.alertController.create({
-          header: 'Sync',
-          message: 'Syncing Completed!',
-          buttons: ['OK']
-        });
-        await alert.present();
-      }
-    });
+  async refresh(): Promise<void> {
+    try {
+      const response = await this.apiService.getProducts().toPromise();
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(response, 'text/xml');
+      const json = xml.getElementsByTagName('GetAllEntriesFromCOFFEESTOCK_TEMP_APPLICATIONResult')[0]?.textContent || '';
+      const pods = JSON.parse(json);
+      console.log(pods);
+      this.pods = pods;
+      const alert = await this.alertController.create({
+        header: 'Refreshed',
+        message: 'Coffee flavours have been refreshed.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    } catch (error) {
+      console.error(error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Failed to load coffee flavours.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
-  async add() {
+  async add(): Promise<void> {
     const modal = await this.modalController.create({
       component: FlavourEditPage
     });
-    return await modal.present();
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data && data.pod) {
+      this.pods.push(data.pod);
+    }
   }
 
-  async edit(pod: Pod) {
+  async edit(pod: Pod): Promise<void> {
     const modal = await this.modalController.create({
       component: FlavourEditPage,
       componentProps: {
-        pod: pod
+        pod
       }
     });
-    return await modal.present();
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data && data.pod) {
+      const index = this.pods.findIndex(p => p.ID === data.pod.ID);
+      if (index >= 0) {
+        this.pods[index] = data.pod;
+      }
+    }
   }
 
-  delete(pod: Pod): void {
-    // TODO: Implement delete functionality
+  async delete(pod: Pod): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Confirm',
+      message: `Are you sure you want to delete ${pod.Name}?`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            this.apiService.deletePod(pod.ID).subscribe({
+              next: (response: string) => {
+                if (response === 'true') {
+                  const index = this.pods.findIndex(p => p.ID === pod.ID);
+                  if (index >= 0) {
+                    this.pods.splice(index, 1);
+                  }
+                } else {
+                  this.alertController.create({
+                    header: 'Error',
+                    message: 'Failed to delete coffee flavour.',
+                    buttons: ['OK']
+                  }).then(alert => alert.present());
+                }
+              },
+              error: (error: any) => {
+                console.error(error);
+                this.alertController.create({
+                  header: 'Error',
+                  message: 'Failed to delete coffee flavour.',
+                  buttons: ['OK']
+                }).then(alert => alert.present());
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 }
