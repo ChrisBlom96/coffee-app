@@ -69,9 +69,10 @@ export class CoffeeFlavoursPage implements OnInit {
     const { data } = await modal.onWillDismiss();
     if (data && data.pod) {
       this.pods.push(data.pod);
+      this.refresh();
     }
   }
-
+  
   async edit(pod: Pod): Promise<void> {
     const modal = await this.modalController.create({
       component: FlavourEditPage,
@@ -85,10 +86,11 @@ export class CoffeeFlavoursPage implements OnInit {
       const index = this.pods.findIndex(p => p.ID === data.pod.ID);
       if (index >= 0) {
         this.pods[index] = data.pod;
+        this.refresh();
       }
     }
   }
-
+  
   async delete(pod: Pod): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Confirm',
@@ -100,31 +102,22 @@ export class CoffeeFlavoursPage implements OnInit {
         },
         {
           text: 'Delete',
-          handler: () => {
-            this.apiService.deletePod(pod.ID).subscribe({
-              next: (response: string) => {
-                if (response === 'true') {
-                  const index = this.pods.findIndex(p => p.ID === pod.ID);
-                  if (index >= 0) {
-                    this.pods.splice(index, 1);
-                  }
-                } else {
-                  this.alertController.create({
-                    header: 'Error',
-                    message: 'Failed to delete coffee flavour.',
-                    buttons: ['OK']
-                  }).then(alert => alert.present());
-                }
-              },
-              error: (error: any) => {
-                console.error(error);
-                this.alertController.create({
-                  header: 'Error',
-                  message: 'Failed to delete coffee flavour.',
-                  buttons: ['OK']
-                }).then(alert => alert.present());
+          handler: async () => {
+            const response = await this.apiService.deletePod(pod.ID).toPromise();
+            if (response === 'true') {
+              const index = this.pods.findIndex(p => p.ID === pod.ID);
+              if (index >= 0) {
+                this.pods.splice(index, 1);
+                this.refresh();
               }
-            });
+            } else {
+              const alert = await this.alertController.create({
+                header: 'Error',
+                message: 'Failed to delete coffee flavour.',
+                buttons: ['OK']
+              });
+              await alert.present();
+            }
           }
         }
       ]

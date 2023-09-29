@@ -65,7 +65,7 @@ export class ApiService {
           <UpdateEntryByID xmlns="intelliacc.com/ws_Auth">
             <Request>
               <ID>${pod.ID}</ID>
-              <ProductNumber>${pod.Barcode}</ProductNumber>
+              <Barcode>${pod.Barcode}</Barcode>
               <Name>${pod.Name}</Name>
               <PricePerBox>${pod.PricePerBox}</PricePerBox>
               <PodsPerBox>${pod.PodsPerBox}</PodsPerBox>
@@ -77,7 +77,7 @@ export class ApiService {
       </soap:Envelope>
     `.trim();
 
-    return this.http.post(this.apiUrl, body, { headers, responseType: 'text' });
+    return this.http.post(`${this.apiUrl}?op=UpdateEntryByID`, body, { headers, responseType: 'text' });
   }
 
   deletePod(id: number): Observable<any> {
