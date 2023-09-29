@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { IonicModule, AlertController, ModalController } from '@ionic/angular';
 import { ApiService } from '../services/api.service';
+import { FlavourEditPage } from '../flavour-edit/flavour-edit.page';
 
 interface Pod {
   name: string;
@@ -44,7 +45,7 @@ export class CoffeeFlavoursPage implements OnInit {
     photoUrl: 'https://via.placeholder.com/150'
   }];
 
-  constructor(private apiService: ApiService, private alertController: AlertController) { }
+  constructor(private apiService: ApiService, private alertController: AlertController, private modalController: ModalController) { }
 
   ngOnInit(): void {
     this.refresh();
@@ -82,8 +83,11 @@ export class CoffeeFlavoursPage implements OnInit {
     });
   }
 
-  add(): void {
-    // TODO: Implement add functionality
+  async add() {
+    const modal = await this.modalController.create({
+      component: FlavourEditPage
+    });
+    return await modal.present();
   }
 
   edit(pod: Pod): void {
