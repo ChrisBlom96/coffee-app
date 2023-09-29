@@ -90,8 +90,14 @@ export class CoffeeFlavoursPage implements OnInit {
     return await modal.present();
   }
 
-  edit(pod: Pod): void {
-    // TODO: Implement edit functionality
+  async edit(pod: Pod) {
+    const modal = await this.modalController.create({
+      component: FlavourEditPage,
+      componentProps: {
+        pod: pod
+      }
+    });
+    return await modal.present();
   }
 
   delete(pod: Pod): void {
