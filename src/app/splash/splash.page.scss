@@ -8,6 +8,19 @@
   transform: translateY(-50%);
 }
 
+ion-content {
+  --background: #ffffff; 
+   // Replace with your desired color
+}
+
+ion-img {
+  max-width: 50%;  // Adjust as needed
+  max-height: 50%; // Adjust as needed
+  display: block;
+  top: 50%;
+  margin: 50% auto;
+}
+
 #container strong {
   font-size: 20px;
   line-height: 26px;
