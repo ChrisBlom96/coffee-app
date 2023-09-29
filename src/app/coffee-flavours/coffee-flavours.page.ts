@@ -6,11 +6,13 @@ import { ApiService } from '../services/api.service';
 import { FlavourEditPage } from '../flavour-edit/flavour-edit.page';
 
 export interface Pod {
-  name: string;
-  productNumber: string;
-  photoUrl?: string;
-  pricePerBox: number;
-  pricePerUnit: number;
+  ID: number;
+  Barcode: string;
+  Name: string;
+  PricePerBox: number;
+  PricePerPod: number;
+  PodsPerBox: number;
+  PhotoName: string;
 }
 
 @Component({
@@ -22,44 +24,40 @@ export interface Pod {
 })
 export class CoffeeFlavoursPage implements OnInit {
   pods: Pod[] = [{
-    name: 'Vanilla',
-    productNumber: 'CP001',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 10,
-    pricePerUnit: 0.5
+    ID: 1,
+    Barcode: 'CP001',
+    Name: 'Vanilla',
+    PricePerBox: 10,
+    PricePerPod: 0.5,
+    PodsPerBox: 20,
+    PhotoName: 'vanilla.jpg'
   },
   {
-    name: 'Caramel',
-    productNumber: 'CP002',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 12,
-    pricePerUnit: 0.6
+    ID: 2,
+    Barcode: 'CP002',
+    Name: 'Caramel',
+    PricePerBox: 12,
+    PricePerPod: 0.6,
+    PodsPerBox: 24,
+    PhotoName: 'caramel.jpg'
   },
   {
-    name: 'Hazelnut',
-    productNumber: 'CP003',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 15,
-    pricePerUnit: 0.75
-  },
-  {
-    name: 'Chocolate',
-    productNumber: 'CP004',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 18,
-    pricePerUnit: 0.9
-  },
-  {
-    name: 'Cinnamon',
-    productNumber: 'CP005',
-    photoUrl: 'https://via.placeholder.com/150',
-    pricePerBox: 20,
-    pricePerUnit: 1
+    ID: 3,
+    Barcode: 'CP003',
+    Name: 'Hazelnut',
+    PricePerBox: 15,
+    PricePerPod: 0.75,
+    PodsPerBox: 30,
+    PhotoName: 'hazelnut.jpg'
   }];
 
-  constructor(private apiService: ApiService, private alertController: AlertController, private modalController: ModalController) { }
+  constructor(
+    private apiService: ApiService,
+    private alertController: AlertController,
+    private modalController: ModalController
+  ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.refresh();
   }
 
@@ -70,13 +68,16 @@ export class CoffeeFlavoursPage implements OnInit {
         const xml = parser.parseFromString(response, 'text/xml');
         const pods = Array.from(xml.getElementsByTagName('Product')).map((product: Element) => {
           return {
-            name: product.getElementsByTagName('ProductName')[0]?.textContent || '',
-            productNumber: product.getElementsByTagName('ProductNumber')[0]?.textContent || '',
-            photoUrl: product.getElementsByTagName('PhotoUrl')[0]?.textContent || '',
-            pricePerBox: parseFloat(product.getElementsByTagName('PricePerBox')[0]?.textContent || '0'),
-            pricePerUnit: parseFloat(product.getElementsByTagName('PricePerUnit')[0]?.textContent || '0')
+            ID: parseInt(product.getElementsByTagName('ID')[0]?.textContent || '0'),
+            Barcode: product.getElementsByTagName('Barcode')[0]?.textContent || '',
+            Name: product.getElementsByTagName('Name')[0]?.textContent || '',
+            PricePerBox: parseFloat(product.getElementsByTagName('PricePerBox')[0]?.textContent || '0'),
+            PricePerPod: parseFloat(product.getElementsByTagName('PricePerPod')[0]?.textContent || '0'),
+            PodsPerBox: parseFloat(product.getElementsByTagName('PodsPerBox')[0]?.textContent || '0'),
+            PhotoName: product.getElementsByTagName('PhotoName')[0]?.textContent || ''
           };
         });
+        console.log(pods);
         this.pods = pods;
         const alert = await this.alertController.create({
           header: 'Refreshed',
@@ -97,24 +98,74 @@ export class CoffeeFlavoursPage implements OnInit {
     });
   }
 
-  async add() {
+  async add(): Promise<void> {
     const modal = await this.modalController.create({
       component: FlavourEditPage
     });
-    return await modal.present();
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data && data.pod) {
+      this.pods.push(data.pod);
+    }
   }
 
-  async edit(pod: Pod) {
+  async edit(pod: Pod): Promise<void> {
     const modal = await this.modalController.create({
       component: FlavourEditPage,
       componentProps: {
-        pod: pod
+        pod
       }
     });
-    return await modal.present();
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data && data.pod) {
+      const index = this.pods.findIndex(p => p.ID === data.pod.ID);
+      if (index >= 0) {
+        this.pods[index] = data.pod;
+      }
+    }
   }
 
-  delete(pod: Pod): void {
-    // TODO: Implement delete functionality
+  async delete(pod: Pod): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Confirm',
+      message: `Are you sure you want to delete ${pod.Name}?`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            this.apiService.deletePod(pod.ID).subscribe({
+              next: (response: string) => {
+                if (response === 'true') {
+                  const index = this.pods.findIndex(p => p.ID === pod.ID);
+                  if (index >= 0) {
+                    this.pods.splice(index, 1);
+                  }
+                } else {
+                  this.alertController.create({
+                    header: 'Error',
+                    message: 'Failed to delete coffee flavour.',
+                    buttons: ['OK']
+                  }).then(alert => alert.present());
+                }
+              },
+              error: (error: any) => {
+                console.error(error);
+                this.alertController.create({
+                  header: 'Error',
+                  message: 'Failed to delete coffee flavour.',
+                  buttons: ['OK']
+                }).then(alert => alert.present());
+              }
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 }
