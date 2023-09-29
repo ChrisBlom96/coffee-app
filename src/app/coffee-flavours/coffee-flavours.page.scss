@@ -4,12 +4,12 @@ ion-title {
 }
 
 ion-toolbar {
-    --background: #8A4B38;
+    --background: #8a4b38;
 }
 
 /* Styling for the ion-content */
 ion-content {
-    --background: #fff;
+    --background: #F5F8FA;
 }
 
 /* Styling for the ion-button */
@@ -20,7 +20,7 @@ ion-button {
 /* Styling for the ion-item lists */
 ion-item {
     padding: 10px;  /* Set padding */
-    box-shadow:13px 4px 3px grey;/* Set the box-shadow with a light grey color */
+    box-shadow: 0px 4px 3px grey;/* Set the box-shadow with a light grey color */
     box-sizing: border-box;  
 }
 
@@ -31,7 +31,7 @@ ion-item {
   }
 
 ion-icon{
-    color: #fff;
+    color: black;
 }
 
 p {
