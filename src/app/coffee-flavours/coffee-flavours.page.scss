@@ -1,0 +1,26 @@
+/* Styling for the ion-title */
+ion-title {
+    --color: #fff;
+}
+
+ion-toolbar {
+    --background: #8A4B38;
+}
+
+/* Styling for the ion-content */
+ion-content {
+    --background: #fff;
+}
+
+/* Styling for the ion-button */
+ion-button {
+    --color: #fff;  /* This sets the text color. If you meant the background, use --background: #fff; */
+}
+
+/* Styling for the ion-item lists */
+ion-item {
+    padding: 10px;  /* Set padding */
+    box-shadow: 0 4px 8px lightgrey;  /* Set the box-shadow with a light grey color */
+    box-sizing: border-box;  
+    
+}
